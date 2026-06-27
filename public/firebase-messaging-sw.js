@@ -1,11 +1,11 @@
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
   apiKey: "AIzaSyDWkupqoh_LpZAGZsYYJalDYmnrkcL8L80",
   authDomain: "hiralal-app.firebaseapp.com",
   projectId: "hiralal-app",
-  storageBucket: "hiralal-app.firebasestorage.app",
+  storageBucket: "hiralal-app.appspot.com",
   messagingSenderId: "1086744796561",
   appId: "1:1086744796561:web:8b4d6653010a741b8c8e30"
 });
@@ -13,11 +13,13 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log('[Service Worker] Background message received: ', payload);
-  const notificationTitle = payload.notification.title || "Hiralal Links Update!";
-  const notificationOptions = {
-    body: payload.notification.body || "A new link has been added.",
-    icon: '/favicon.ico'
+  console.log("[SW] Background message:", payload);
+
+  const title = payload.notification?.title || "Hiralal Update";
+  const options = {
+    body: payload.notification?.body || "New update available"
+    
   };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+
+  self.registration.showNotification(title, options);
 });

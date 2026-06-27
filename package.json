@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "autoprefixer": "^10.4.19",
+    "firebase": "^10.12.0",
     "framer-motion": "^11.11.17",
     "next": "^15.1.0",
     "postcss": "^8.4.49",

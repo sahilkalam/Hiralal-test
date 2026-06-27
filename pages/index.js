@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Head from "next/head"
 import Link from "next/link"
 import { useState, useEffect } from 'react'
+import { app } from "../firebase/firebaseClient" // Firebase connection import kiya
 
 // Main Page Entry Animations
 const pageContainerVariants = {
@@ -22,12 +23,11 @@ const pageItemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.215, 0.610, 0.355, 1.000], // Smooth cubic-bezier
+      ease: [0.215, 0.610, 0.355, 1.000], 
     }
   }
 }
 
-// Dedicated List Transition (Prevents production stutter)
 const listVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -39,7 +39,10 @@ const listVariants = {
 export default function Home() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fcmToken, setFcmToken] = useState(''); // Token store karne ke liye state
+  const [liveNotification, setLiveNotification] = useState(null); // Live notification pop-up state
 
+  // EFFECT 1: Fetching Links Data (Aapka Existing Logic)
   useEffect(() => {
     const fetchAllLinks = async () => {
       try {
@@ -62,6 +65,52 @@ export default function Home() {
     fetchAllLinks();
   }, [])
 
+  // EFFECT 2: Firebase Cloud Messaging Integration
+  useEffect(() => {
+    const setupNotification = async () => {
+      if (typeof window !== 'undefined') {
+        try {
+          const { getMessaging, getToken, onMessage, isSupported } = await import('firebase/messaging');
+          
+          const supported = await isSupported();
+          if (!supported) return;
+
+          const messaging = getMessaging(app);
+
+          // Request Notification Permission
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            // NOTE: 'YOUR_PUBLIC_VAPID_KEY' ko Firebase Console -> Cloud Messaging se badlein
+            const token = await getToken(messaging, {
+              vapidKey: 'BNOpC1eVbkSbQX5S8G34jWl5a-pegKabHDDSsqGQYgeKsxUlMoMKWoNFBQDrYFCPxGbZVgaaY5mqH1YtoPCAvIA' 
+            });
+
+            if (token) {
+              setFcmToken(token);
+              console.log("FCM Device Token Generated successfully:", token);
+            }
+          }
+
+          // Handle Foreground Notification (Jab user app par live ho)
+          const unsubscribe = onMessage(messaging, (payload) => {
+            console.log('Foreground notification payload received: ', payload);
+            setLiveNotification(payload.notification);
+            
+            // Auto hide notification card after 6 seconds
+            setTimeout(() => setLiveNotification(null), 6000);
+          });
+
+          return () => unsubscribe();
+
+        } catch (err) {
+          console.error("Error setting up FCM: ", err);
+        }
+      }
+    };
+
+    setupNotification();
+  }, []);
+
   const safeData = Array.isArray(data) ? data : [];
 
   return (
@@ -82,7 +131,24 @@ export default function Home() {
         <meta name="twitter:description" content="Latest links by Hiralal Kumar Bharti Paswan || choco wala" />
       </Head>
 
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12 antialiased selection:bg-blue-500 selection:text-white">
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12 antialiased selection:bg-blue-500 selection:text-white relative">
+        
+        {/* Real-time Dynamic Foreground Toast Alert */}
+        <AnimatePresence>
+          {liveNotification && (
+            <motion.div 
+              initial={{ opacity: 0, y: -50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.9 }}
+              className="absolute top-4 left-4 right-4 mx-auto max-w-sm bg-white border-l-4 border-blue-500 rounded-xl shadow-xl p-4 z-50 flex flex-col space-y-1"
+            >
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">New Live Notification</span>
+              <h4 className="text-sm font-bold text-gray-900">{liveNotification.title}</h4>
+              <p className="text-xs text-gray-600">{liveNotification.body}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div
           variants={pageContainerVariants}
           initial="hidden"
@@ -108,9 +174,8 @@ export default function Home() {
               <span className={`h-2 w-2 rounded-full transition-colors duration-300 ${isLoading ? 'bg-amber-400 animate-pulse' : 'bg-green-500'}`}></span>
             </div>
 
-            {/* List Wrapper - Added overflow-hidden to prevent layout jumps */}
+            {/* List Wrapper */}
             <div className="space-y-3 min-h-[160px] relative overflow-hidden rounded-2xl">
-              {/* CRITICAL FIX: Changed exitBeforeEnter to mode="wait" */}
               <AnimatePresence mode="wait">
                 {isLoading ? (
                   <motion.div
@@ -140,7 +205,7 @@ export default function Home() {
                       <motion.div
                         key={item?.slug || i}
                         variants={pageItemVariants}
-                        layout // Smoothly handles layout positioning changes
+                        layout
                         whileHover={{ scale: 1.015, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300 overflow-hidden"

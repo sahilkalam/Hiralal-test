@@ -1,0 +1,45 @@
+[
+    {
+        "title":"Dhiraj gupta",
+        "content":"this is a instagram links provided by hiralal links..",
+        "link":"https://www.instagram.com/itz_dhirajgupta.24",
+        "slug":"dhiraj-gupta-24"
+    },
+    {
+        "title":"Telegram Channel",
+        "content":"this link is provide by Developer",
+        "link":"https://t.me/sahilkalam9",
+        "slug":"Telegram-channel"
+    }
+    ,{
+        "title":"Anime Website",
+        "link":"https://www.rareanimes.mov/",
+        "content":"Note use brave browser for better experience",
+        "slug":"anime-website"
+    }
+    ,{
+        "title":"sarvoch coaching", 
+        "link":"https://sarvochcoachingcentre.vercel.app",
+        "content":"this link is provide by Hirala kumar bharti paswan",
+        "slug":"sarvoch-coaching-centre"
+
+    },
+    {
+        "title":"Sahil portfolio",
+        "link":"https://sahil-dev.pages.dev/",
+        "content":"this link is provide by Hirala kumar bharti paswan",
+        "slug":"sahil-portfolio"
+    },
+    {
+        "title":"Instagram page",
+        "link":"https://www.instagram.com/sahilkalam93/",
+        "content":"this link provided by devloper sahil support me on instagram ",
+        "slug":"developer-instagram-id"
+    }, 
+    {
+        "title":"Movie website",
+        "link":"https://bollyflix.med/",
+        "content":"Note use brave browser for better experience",
+        "slug":"movie-website"
+    }
+]

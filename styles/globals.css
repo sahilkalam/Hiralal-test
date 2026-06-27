@@ -1,0 +1,27 @@
+
+
+/* Custom WebKit Scrollbar Setup */
+
+/* Width and height of the scrollbar track */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Styling the track (background) */
+::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Tailwind gray-100 */
+  border-radius: 8px;
+}
+
+/* Styling the draggable thumb */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Tailwind gray-300 */
+  border-radius: 8px;
+  border: 2px solid #f3f4f6; /* Creates padding space around thumb */
+}
+
+/* Hover effect on the scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Tailwind gray-400 */
+}

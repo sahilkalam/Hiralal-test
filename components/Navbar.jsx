@@ -1,103 +1,81 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
-  // मोबाइल मेन्यू ओपन/क्लोज करने के लिए स्टेट
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Links", href: "/links" },
+    { name: "Search", href: "/search" },
+    { name: "Download", href: "/download" },
+    { name: "Contact", href: "/contact" },
+  ];
 
   return (
-    <nav className="w-full bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+    <nav className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100" : "bg-transparent"}`}>
+      <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
         
-        {/* Logo / Brand Name */}
-        <div className="font-extrabold text-xl text-gray-900 tracking-tight">
+        <div className="font-black text-2xl text-gray-900 tracking-tighter">
           <Link href="/">
-            Hiralal Links
+            HIRALAL<span className="text-primary">.</span>
           </Link>
         </div>
 
-        {/* Desktop Navigation Links (बड़ी स्क्रीन के लिए - md:flex, मोबाइल पर hidden) */}
-        <div className="hidden md:flex items-center space-x-6 font-semibold text-gray-600">
-          <Link href="/" className="hover:text-blue-600 transition-colors">
-            Home
-          </Link>
-          <Link href="/contact" className="hover:text-blue-600 transition-colors">
-            Contact
-          </Link>
-          <Link href="/search" className="hover:text-blue-600 transition-colors">
-            Search
-          </Link>
-          <Link href="/download" className="hover:text-blue-600 transition-colors">
-          Download
-          </Link>
+        <div className="hidden md:flex items-center space-x-8 font-semibold text-gray-600">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`hover:text-primary transition-colors relative group ${router.pathname === link.href ? "text-primary" : ""}`}
+            >
+              {link.name}
+              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${router.pathname === link.href ? "w-full" : ""}`}></span>
+            </Link>
+          ))}
         </div>
 
-        {/* Hamburger Menu Button (सिर्फ मोबाइल के लिए - md:hidden) */}
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
             type="button"
-            className="text-gray-600 hover:text-gray-900 focus:outline-none"
+            className="text-gray-600 hover:text-gray-900 focus:outline-none p-2 rounded-lg bg-gray-50"
             aria-label="Toggle menu"
           >
-            {/* बटन का आइकॉन: ओपन होने पर 'X' और क्लोज होने पर '☰' (Hamburger) दिखेगा */}
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Links (सिर्फ मोबाइल पर दिखेगा जब isOpen true होगा) */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-3 flex flex-col font-semibold text-gray-600 shadow-inner">
-          <Link 
-            href="/" 
-            className="hover:text-blue-600 transition-colors block"
-            onClick={() => setIsOpen(false)} // लिंक पर क्लिक करते ही मेन्यू बंद हो जाएगा
-          >
-            Home
-          </Link>
-          <Link 
-            href="/contact" 
-            className="hover:text-blue-600 transition-colors block"
-            onClick={() => setIsOpen(false)}
-          >
-            Contact
-          </Link>
-          <Link 
-            href="/search" 
-            className="hover:text-blue-600 transition-colors block"
-            onClick={() => setIsOpen(false)}
-          >
-            Search
-          </Link>
-          <Link 
-            href="/download" 
-            className="hover:text-blue-600 transition-colors block"
-            onClick={() => setIsOpen(false)}
-          >
-            Download
-          </Link>
+        <div className="md:hidden bg-white border-t border-gray-50 px-6 py-6 space-y-4 flex flex-col font-bold text-gray-700 shadow-xl animate-in slide-in-from-top duration-300">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`hover:text-primary transition-colors block text-lg ${router.pathname === link.href ? "text-primary" : ""}`}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
       )}
     </nav>

@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { useRouter } from "next/router" // Next.js 10/Pages Router के लिए बिल्कुल सही है
+import { useRouter } from "next/router"
 import { motion } from "framer-motion"
 import Head from "next/head"
+import Link from "next/link"
 
 export default function SearchPage() {
   const [searchValue, setSearchValue] = useState("")
@@ -10,7 +11,6 @@ export default function SearchPage() {
   const handleSearch = (e) => {
     e.preventDefault()
     if (searchValue.trim()) {
-      // बटन क्लिक या Enter दबाते ही /links/slug-value पर रीडायरेक्ट करेगा
       router.push(`/links/${encodeURIComponent(searchValue.trim())}`)
     }
   }
@@ -18,80 +18,66 @@ export default function SearchPage() {
   return (
     <>
       <Head>
-        {/* SEO Meta Tags */}
         <title>Search Links | Hiralal App</title>
-        <meta name="description" content="Search and find all the links uploaded on Hiralal links platform quickly by entering their slug." />
-        <meta name="keywords" content="Hiralal links, search links, slug search, links tracker" />
-        <meta name="robots" content="index, follow" />
-        
-        {/* Open Graph / Facebook / Vercel Previews */}
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Search Links | Hiralal App" />
-        <meta property="og:description" content="Search and find all the links uploaded on Hiralal links platform." />
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Search Links | Hiralal App" />
-        <meta name="twitter:description" content="Search and find all the links uploaded on Hiralal links platform." />
+        <meta name="description" content="Search and find all the links uploaded on Hiralal links platform." />
       </Head>
 
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col items-center justify-center px-6 antialiased">
+      <main className="min-h-screen bg-[#f9fafb] flex flex-col items-center justify-center px-6 antialiased selection:bg-primary selection:text-white relative overflow-hidden">
         
-        {/* Framer Motion Container: स्मूथ एंट्री एनीमेशन */}
+        {/* Decorative elements */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md border border-gray-100"
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-lg bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 border border-gray-100 relative z-10"
         >
-          {/* Header Title Section */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-extrabold text-gray-950 tracking-tight mb-2">
-              Hiralal Links Search
+          <div className="text-center mb-10 space-y-3">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tighter leading-none">
+              Link <span className="text-primary">Search</span>
             </h1>
-            <p className="text-gray-500 text-sm">
-              Search links uploaded on Hiralal links by its slug
+            <p className="text-gray-500 font-medium text-sm">
+              Discover provisions by entering their unique slug
             </p>
           </div>
 
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="relative">
+          <form onSubmit={handleSearch} className="space-y-6">
+            <div className="relative group">
               <input
                 type="text"
-                placeholder="Enter link slug here..."
+                placeholder="e.g. latest-updates"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-medium text-gray-800 placeholder-gray-400 bg-gray-50/50"
+                className="w-full px-8 py-5 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 outline-none transition-all font-bold text-gray-800 placeholder-gray-300 text-lg"
                 required
               />
+              <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none text-gray-300 group-focus-within:text-primary transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+              </div>
             </div>
 
-            {/* Framer Motion Animated Submit Button */}
             <motion.button
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-colors shadow-lg shadow-blue-100 flex items-center justify-center space-x-2 cursor-pointer"
+              className="w-full bg-primary hover:bg-primary-dark text-white font-black py-5 px-8 rounded-2xl transition-all shadow-xl shadow-primary/20 flex items-center justify-center space-x-3 text-lg"
             >
-              <span>Search Links</span>
-              
-              {/* Modern Search Icon SVG */}
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
+              <span>Search Database</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </motion.button>
           </form>
+
+          <div className="mt-10 pt-8 border-t border-gray-50 text-center">
+            <Link href="/links" className="text-xs font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors">
+              Browse All Provisions →
+            </Link>
+          </div>
         </motion.div>
         
       </main>
